@@ -2,10 +2,12 @@
 #### STAT + PLOTS ####
 ######################
 
+#' Descriptive statistics tables, boxplots
+#' 
+#' 2019-10-13 for OBV
+#' @param varColor variable for colors in boxplots
+#' @export
 write_boxplot_descStat <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=NULL, varColor=NA, statMethod=NULL) {
-  ## 2019-10-13 for OBV
-  ## Descriptive statistics tables, boxplots
-  ## varColor: variable for colors in boxplots
   require(dplyr)
   require(ggplot2)
   require(ggpubr)
@@ -42,23 +44,28 @@ write_boxplot_descStat <- function(data, fNameMid, folder=".", varsExclude=c(), 
   }
 }
 
-# plot_corr <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=NULL, order="AOE", width=12, height=12) {
-#   ## 2019-10-13 for OBV
-#   ## uses cor() and corrplot.mixed
-#   require(corrplot)
-#   numVars <- unlist(lapply(data, is.numeric))
-#   numVars[names(numVars) %in% varsExclude] <- FALSE
-#   numNames <- names(numVars[numVars])
-#   if (!is.null(varsInclude)) numNames <- intersect(varsInclude, numNames)
-#   pdf(file.path(folder,paste0("corrplot_",fNameMid,"_",deparse(substitute(data)),".pdf")),width, height)
-#   cors <- cor(data[, numNames], use="na.or.complete")
-#   colnames(cors) <- rownames(cors) <- numNames
-#   corrplot.mixed(cors, order=order)
-#   dev.off()
-# }
+#' Plot correlations using package:corrplot
+#' 
+#' 2019-10-13 for OBV; 2020-05-05 for Kiraly
+#' uses cor() and corrplot.mixed()
+#' 
+#' @section Implementation_old:
+#' plot_corr <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=NULL, order="AOE", width=12, height=12) {
+#'   ## 2019-10-13 for OBV
+#'   ## uses cor() and corrplot.mixed
+#'   require(corrplot)
+#'   numVars <- unlist(lapply(data, is.numeric))
+#'   numVars[names(numVars) %in% varsExclude] <- FALSE
+#'   numNames <- names(numVars[numVars])
+#'   if (!is.null(varsInclude)) numNames <- intersect(varsInclude, numNames)
+#'   pdf(file.path(folder,paste0("corrplot_",fNameMid,"_",deparse(substitute(data)),".pdf")),width, height)
+#'   cors <- cor(data[, numNames], use="na.or.complete")
+#'   colnames(cors) <- rownames(cors) <- numNames
+#'   corrplot.mixed(cors, order=order)
+#'   dev.off()
+#' }
+#' @export
 plot_corr <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=NULL, orders=c("AOE", "original"), wh=12, ...) {
-  ## 2019-10-13 for OBV; 2020-05-05 for Kiraly
-  ## uses cor() and corrplot.mixed()
   require(corrplot)
   require(dplyr)
   dataName <- deparse(substitute(data))
@@ -76,6 +83,8 @@ plot_corr <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=N
 #### WRITE ####
 ###############
 
+#' Write a table with rownames using write.table
+#' @export
 write.table.rowNames <- function(x, col1name="rowNames", quote=F, sep="\t", row.names=F, col.names=T, ...) {
   xx <- cbind("rowNames"=rownames(x), x)
   colnames(xx) <- c(col1name, colnames(xx)[-1])
@@ -97,6 +106,7 @@ write.table.rowNames <- function(x, col1name="rowNames", quote=F, sep="\t", row.
 #' @param name Name of the RColorBrewer palette.
 #' @param digits Number of digits in x to form categories for colors. May be negative to round to tens, hundreds, etc.
 #' @return Named vector of color names of the same length as x.
+#' @export
 brewPalCont <- function(x, n=9, name="OrRd", digits=2) {
     require(RColorBrewer)
     myPalette <- colorRampPalette(rev(brewer.pal(n, name)))
@@ -105,11 +115,30 @@ brewPalCont <- function(x, n=9, name="OrRd", digits=2) {
     if (!is.null(names(x))) setNames(cols,names(x)) else setNames(cols,x)
 }
 
+#' Convert X to discretized values with elements in the form of intervals min-max.
+#' 
+#' See infotheo::discretize for parameters; defaults are: 
+#' @param X Numeric vector or list
+#' @param disc Default "equalfreq"
+#' @param nbins Default NROW(X)^(1/3)
+#' @section Old implementation:
+#' discretize_namedIntervals_vector <- function(X,...) {
+#'     ## See infotheo::discretize for parameters; defaults are: disc="equalfreq", nbins=sqrt(NROW(x)).
+#'     ## Returns discretized data in the form of intervals min-max.
+#'     require(infotheo)
+#'     d<- infotheo::discretize(X,...)$X
+#'     m<-tapply(X,d,min)
+#'     M<-tapply(X,d,max)
+#'     d_int <- paste0(format(m), "-", format(M))
+#'     names(d_int) <- names(m)
+#'     d_int[m==M] <- format(m)[m==M]
+#'     #d_int[d]
+#'     browser()
+#'     #as.character((sapply(as.character(d), function(cd) {d_int[cd]})))
+#'     as.character(d_int[as.character(d)])
+#' }
+#' @export
 discretize_namedIntervals <- function(X,...) {
-  ## See infotheo::discretize for parameters; defaults are: 
-  ##    disc  = "equalfreq"
-  ##    nbins = NROW(X)^(1/3)
-  ## Returns discretized data (atomic or list) with elements in the form of intervals min-max.
   require(infotheo)
   d <- infotheo::discretize(X,...)
   Xf <- as.data.frame(X)
@@ -130,25 +159,15 @@ discretize_namedIntervals <- function(X,...) {
   if (is.atomic(X)) Xd[[1]] else Xd
 }
 
-# discretize_namedIntervals_vector <- function(X,...) {
-#     ## See infotheo::discretize for parameters; defaults are: disc="equalfreq", nbins=sqrt(NROW(x)).
-#     ## Returns discretized data in the form of intervals min-max.
-#     require(infotheo)
-#     d<- infotheo::discretize(X,...)$X
-#     m<-tapply(X,d,min)
-#     M<-tapply(X,d,max)
-#     d_int <- paste0(format(m), "-", format(M))
-#     names(d_int) <- names(m)
-#     d_int[m==M] <- format(m)[m==M]
-#     #d_int[d]
-#     browser()
-#     #as.character((sapply(as.character(d), function(cd) {d_int[cd]})))
-#     as.character(d_int[as.character(d)])
-# }
 
+#' Get discretized time intervals in form "H:MM-H:MM"
+#' 
+#' @param times Vector of times in POSIX* format
+#' @param time0 ???
+#' @param nbins Number of intervals
+#' @return Character vector of discretized time intervals in form "H:MM-H:MM"
+#' @export
 discretizeTime_equalInterval <- function(times, time0, nbins) {
-  ## Input times (vector) in POSIX* format and number of intervals (nbins)
-  ## Outputs character vector of discretized time intervals in form "H:MM-H:MM"
   require(infotheo)
   CT_M <- difftime(times, rep(time0, length(times)), units="mins")
   CT_EqT <- discretize(CT_M, nbins=nbins, disc="equalwidth")$X
@@ -163,7 +182,8 @@ discretizeTime_equalInterval <- function(times, time0, nbins) {
   CT_intervals[CT_EqT]
 }
 
-
+#' Capitalize words
+#' @export
 capwords <- function(s, strict = FALSE) {
   cap <- function(s) paste(toupper(substring(s,1,1)),
     {s <- substring(s,2); if(strict) tolower(s) else s},
@@ -171,12 +191,19 @@ capwords <- function(s, strict = FALSE) {
   sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
 }
 
-
+###############
 #### PLOTS ####
+###############
 
+
+#' Plot MDS that replaces limma::plotMDS
+#' 
+#' Uses isoIMS
+#' Similar to limma::plotMDS, except that is uses all parameters for distance calculation, 
+#' while limma uses only top=XX genes, but XX cannot be set
+#' @param main If TRUE, title is generated automatically; default NULL, string othervise
+#' @export
 plotIsoMDS <- function(data9, scale=F, center=F, labels=names(data9), col=NULL, cex=1, main=NULL, cex.main=1, xlab="Coordinate 1", ylab="Coordinate 2", ...) {
-  ## similar to limma::plotMDS, except that is uses all parameters for distance calculation, while limma uses only top=XX genes, but XX cannot be set?!
-  ## main=T: title is generated automatically
   mainStdUsed <- "non-standardized"
   if(scale) { if(center) {mainStdUsed<-"standardized"} else {mainStdUsed<-"scaled"}} else {if(center) {mainStdUsed<-"centered"}}
   scTdata9 <- scale(t(data9), scale=scale, center=center)
@@ -195,9 +222,12 @@ plotIsoMDS <- function(data9, scale=F, center=F, labels=names(data9), col=NULL, 
   title(main=myMain, cex.main=cex.main)
 } 
 
+
+#' Logistic Regression plot of effects
+#' 
+#' Developed for OBV 2019-10-13
+#' @export
 multiEffectPlot <- function(model, effectNames=c("anova", "summary"), OR=FALSE, test="Chi") {
-  ## 2019-10-13 for OBV
-  ## LOGISTIC REGRESSION PLOT
   require(ggplot2); require(ggthemes); require(dplyr)
   if ((effectNames == "anova")[[1]]) {
     beta.table <- data.frame(anova(model, test=test), summary(model)$coef, confint(model))
@@ -217,6 +247,17 @@ multiEffectPlot <- function(model, effectNames=c("anova", "summary"), OR=FALSE, 
   p + geom_pointrange() +  xlab("") + geom_hline(yintercept = 0, col="darkgrey", lty = 3, lwd=1) + coord_flip() + theme_few()
 }
 
+
+#' Logistic Regression boxplot
+#' 
+#' @section Old implementation:
+#' plotBinary <- function (X, Y, ...) {
+#'   plot(X, jitter(Y, factor = 0.1), col = rgb(0, 0, 0, 0.5), pch = 19, ylim = c(-0.2, 1.2), ...)
+#'   boxplot(X ~ Y, horizontal = TRUE, notch = TRUE, add = TRUE,
+#'           at = c(-0.1, 1.1), width = c(0.1, 0.1), col = "grey",
+#'           boxwex = 0.1, yaxt = "n")
+#' }
+#' @export
 ggBinary <- function (data1, X, Y, color, xlab, ylab, notch=FALSE, ...) {
   ggplot(data1, aes_string(Y,X), ...) + xlab(xlab) + ylab(ylab) + 
     coord_flip() + #scale_x_discrete(breaks=f, drop=FALSE) +
@@ -224,17 +265,13 @@ ggBinary <- function (data1, X, Y, color, xlab, ylab, notch=FALSE, ...) {
     geom_jitter(aes_string(color=color),height=0,width=0.2)
 }
 
-# plotBinary <- function (X, Y, ...) {
-#   plot(X, jitter(Y, factor = 0.1), col = rgb(0, 0, 0, 0.5), pch = 19, ylim = c(-0.2, 1.2), ...)
-#   boxplot(X ~ Y, horizontal = TRUE, notch = TRUE, add = TRUE,
-#           at = c(-0.1, 1.1), width = c(0.1, 0.1), col = "grey",
-#           boxwex = 0.1, yaxt = "n")
-# }
 
 #### CALCULATIONS ####
 
-## 1-Persons/2, handles NA
+#' 1-Persons/2 that handles NA
+#' @export
 corDist <- function(x) as.dist((1-cor(t(x), use="pairwise.complete.obs"))/2)
 
-## robust scale columns, does not handle NA
+#' Robust scale columns, does not handle NA
+#' @export
 scaleRobust <- function(x) sweep(sweep(x,2,apply(x,2,median)), 2, apply(x,2,mad), "/")

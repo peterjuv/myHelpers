@@ -2,24 +2,27 @@
 % Please edit documentation in R/myHelpers.R
 \name{brewPalCont}
 \alias{brewPalCont}
-\title{Brew a color palette from a numerical vector x.}
+\title{Brew a color palette from a numerical vector x with optional names.}
 \usage{
-brewPalCont(x, n = 9, name = "OrRd", digits = 2)
+brewPalCont(x, n = 9, name = "OrRd", digits = 2, namesFrom = NULL)
 }
 \arguments{
-\item{x}{Numeric vector.}
+\item{x}{Numeric vector with optional names.}
 
 \item{n}{Number of colors for RColorBrewer (depends on the name).}
 
 \item{name}{Name of the RColorBrewer palette.}
 
 \item{digits}{Number of digits in x to form categories for colors. May be negative to round to tens, hundreds, etc.}
+
+\item{namesFrom}{Vector of names to be added to colors; default is names(x) or x.}
 }
 \value{
-Named vector of color names of the same length as x.
+Named vector of colors of the same length as x.
 }
 \description{
 Uses RColorBrewer palette names, default is OrRd with 9 colors
-Use more/less colors (n) for a bigger/smaller range, i.e. mess/less extremes at each end.
+Use more/less colors (n) for a bigger/smaller range, i.e. more/less extremes at each end.
 Use more/less digits for more/less categories of colors.
+If namesFrom given, add names to colors; otherwise, add names(x) or x.
 }

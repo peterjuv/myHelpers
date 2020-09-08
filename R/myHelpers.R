@@ -91,29 +91,54 @@ write.table.rowNames <- function(x, col1name="rowNames", quote=F, sep="\t", row.
   write.table(xx, quote=quote, sep=sep, row.names=row.names, col.names=col.names, ...)
 }
 
-#####################
-#### CONVERSIONS ####
-#####################
+################
+#### COLORS ####
+################
 
-#' Brew a color palette from a numerical vector x. 
+#' Brew a color palette from a factor x with optional names.
 #' 
 #' Uses RColorBrewer palette names, default is OrRd with 9 colors
-#' Use more/less colors (n) for a bigger/smaller range, i.e. mess/less extremes at each end.
-#' Use more/less digits for more/less categories of colors.
+#' Use more/less colors (n) for a bigger/smaller range, i.e. more/less extremes at each end.
+#' If namesFrom given, add names to colors; otherwise, add names(x) or x.
 #' 
-#' @param x Numeric vector.
+#' @param x Numeric vector with optional names.
+#' @param n Number of colors for RColorBrewer (depends on the name).
+#' @param name Name of the RColorBrewer palette.
+#' @param namesFrom Vector of names to be added to colors; default is names(x) or x.
+#' @return Named vector of colors of the same length as x.
+#' @export
+brewPalFac <- function(x, n=9, name="OrRd", namesFrom=NULL) {
+    if (!is.null(namesFrom)) x <- setNames(x, namesFrom)
+    x <- as.factor(x)
+    cols <- colorRampPalette(rev(RColorBrewer::brewer.pal(n, name)))(length(levels(x)))[x]
+    if (!is.null(names(x))) setNames(cols,names(x)) else setNames(cols,x)
+}
+
+#' Brew a color palette from a numerical vector x with optional names.
+#' 
+#' Uses RColorBrewer palette names, default is OrRd with 9 colors
+#' Use more/less colors (n) for a bigger/smaller range, i.e. more/less extremes at each end.
+#' Use more/less digits for more/less categories of colors.
+#' If namesFrom given, add names to colors; otherwise, add names(x) or x.
+#' 
+#' @param x Numeric vector with optional names.
 #' @param n Number of colors for RColorBrewer (depends on the name).
 #' @param name Name of the RColorBrewer palette.
 #' @param digits Number of digits in x to form categories for colors. May be negative to round to tens, hundreds, etc.
-#' @return Named vector of color names of the same length as x.
+#' @param namesFrom Vector of names to be added to colors; default is names(x) or x.
+#' @return Named vector of colors of the same length as x.
 #' @export
-brewPalCont <- function(x, n=9, name="OrRd", digits=2) {
-    require(RColorBrewer)
-    myPalette <- colorRampPalette(rev(brewer.pal(n, name)))
+brewPalCont <- function(x, n=9, name="OrRd", digits=2, namesFrom=NULL) {
+    if (!is.null(namesFrom)) x <- setNames(x, namesFrom)
+    myPalette <- colorRampPalette(rev(RColorBrewer::brewer.pal(n, name)))
     xInd <- round(x*10**digits)
     cols <- myPalette(max(xInd)-min(xInd)+1)[xInd-min(xInd)+1]
     if (!is.null(names(x))) setNames(cols,names(x)) else setNames(cols,x)
 }
+
+#####################
+#### CONVERSIONS ####
+#####################
 
 #' Convert X to discretized values with elements in the form of intervals min-max.
 #' 

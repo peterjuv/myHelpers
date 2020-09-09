@@ -116,7 +116,7 @@ write.table.rowNames <- function(x, col1name="rowNames", quote=F, sep="\t", row.
 #' @export
 brewPalFac <- function(x, n=9, name="OrRd", pull=NULL, namesFrom=NULL) {
     if (!is.null(namesFrom)) x <- setNames(x, namesFrom)
-    if (!is.factor(x)) x <- as.factor(x, levels=unique(x))
+    if (!is.factor(x)) x <- factor(x, levels=unique(x))
     if (is.null(pull)) pull <- 1:n
     assertthat::assert_that(all(pull > 0) & all(pull <= n) & all(pull == round(pull)))
     cols <- colorRampPalette(rev(RColorBrewer::brewer.pal(n, name)[pull]))(length(levels(x)))[x]

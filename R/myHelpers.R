@@ -102,12 +102,16 @@ write.table.rowNames <- function(x, col1name="rowNames", quote=F, sep="\t", row.
 #' Colors are ordered according to the order of factor levels.
 #' If namesFrom given, add names to colors; otherwise, add names(x) or x.
 #' 
-#' @param x Numeric vector with optional names.
+#' @param x Numeric vector/factor with optional names.
 #' @param n Number of colors for RColorBrewer (depends on the name).
 #' @param name Name of the RColorBrewer palette.
 #' @param pull Indices to pull colors from RColorBrewer::brewer.pal
 #' @param namesFrom Vector of names to be added to colors; default is names(x) or x.
-#' @return Named vector of colors of the same length as x.
+#' @return Named factor of colors of the same length as x where the order of colors corresponds to the order of x.
+#' @section Implementation:
+#' In the 2nd to the last line, we create a factor from colsn with levels ordered as they appear;
+#' In the last line, we reorder the levels of that factor according to the order of levels in x;
+#' xtfrm(unique(x)) reports indices of (unique) values in levels.
 #' @export
 brewPalFac <- function(x, n=9, name="OrRd", pull=NULL, namesFrom=NULL) {
     if (!is.null(namesFrom)) x <- setNames(x, namesFrom)
@@ -115,7 +119,9 @@ brewPalFac <- function(x, n=9, name="OrRd", pull=NULL, namesFrom=NULL) {
     assertthat::assert_that(all(pull > 0) & all(pull <= n) & all(pull == round(pull)))
     x <- as.factor(x)
     cols <- colorRampPalette(rev(RColorBrewer::brewer.pal(n, name)[pull]))(length(levels(x)))[x]
-    if (!is.null(names(x))) setNames(cols,names(x)) else setNames(cols,x)
+    if (!is.null(names(x))) colsn <- setNames(cols,names(x)) else colsn <- setNames(cols,x)
+    colsf <- factor(colsn, levels = unique(colsn))
+    factor(colsf, levels = levels(colsf)[xtfrm(unique(x))])
 }
 
 #' Brew a color palette from a numerical vector x with optional names.

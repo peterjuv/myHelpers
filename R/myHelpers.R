@@ -1,3 +1,18 @@
+#' myHelpers: General tools for wirking with R
+#'
+#' General tools for wirking with R
+#' 
+#' @author Peter Juvan, \email{peter.juvan@gmail.com}
+#' @docType package
+#' @section STAT + PLOTS:
+#' @section Write:
+#' @section Colors:
+#' @section Conversions:
+#' @section Plots:
+#' @section Calculations:
+#' @name myHelpers
+NULL
+
 ######################
 #### STAT + PLOTS ####
 ######################
@@ -151,6 +166,43 @@ brewPalCont <- function(x, n=9, name="OrRd", digits=2, namesFrom=NULL) {
 #### CONVERSIONS ####
 #####################
 
+#' Convert a factor with names to a named character vector
+#' 
+#' @param fac Factor with optional with names
+#' @return Character vector with optional names
+#' @examples
+#' defactorChr(factor(c(1,"a")))
+#' defactorChr(factor(setNames(c(1,2,3),c("a","b","c"))))
+#' defactorChr(factor(setNames(c("1","2","3"),c("a","b","c"))) )
+#' defactorChr(factor(setNames(c("1a","2b","3c"),c("a","b","c"))))
+#' defactorChr(factor(setNames(c(TRUE, FALSE), c("t","f"))))
+#' @rdname defactor
+#' @export
+defactorChr <- function(fac) {
+  setNames(levels(fac)[as.integer(fac)], names(fac))
+}
+
+#' Convert a factor with names to a named vector and converts to logical or numeric if possible
+#' 
+#' @return Vector with optional names 
+#' @examples
+#' defactor(factor(c(1,"a")))
+#' defactor(factor(setNames(c(1,2,3),c("a","b","c"))))
+#' defactor(factor(setNames(c("1","2","3"),c("a","b","c"))) )
+#' defactor(factor(setNames(c("1a","2b","3c"),c("a","b","c"))))
+#' defactor(factor(setNames(c(TRUE, FALSE), c("t","f"))))
+#' @rdname defactor
+#' @export
+defactor <- function(fac) {
+  dfac <- defactorChr(fac)
+  testn <- suppressWarnings(as.numeric(dfac))
+  testl <- suppressWarnings(as.logical(dfac))
+  if(all(!is.na(testn))) setNames(as.numeric(dfac), names(fac))
+  else if(all(!is.na(testl))) setNames(as.logical(dfac), names(fac))
+  else dfac
+}
+
+
 #' Convert X to discretized values with elements in the form of intervals min-max.
 #' 
 #' See infotheo::discretize for parameters; defaults are: 
@@ -301,8 +353,9 @@ ggBinary <- function (data1, X, Y, color, xlab, ylab, notch=FALSE, ...) {
     geom_jitter(aes_string(color=color),height=0,width=0.2)
 }
 
-
+######################
 #### CALCULATIONS ####
+######################
 
 #' 1-Persons/2 that handles NA
 #' @export

@@ -1,19 +1,29 @@
 Package: myHelpers
-Title: What the Package Does (One Line, Title Case)
+Title: Misc helper functions for R
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Peter",
+           family = "Juvan",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           email = "peter.juvan@gmail.com",
+           comment = c(ORCID = "0000-0003-2873-5247"))
+Description: Misc helper functions for R.
 License: MIT + file LICENSE
 Suggests: 
     testthat,
-    covr
+    covr,
+	MASS,
+	infotheo,
+	corrplot,
+	dplyr,
+	assertthat,
+	ggplot2,
+	ggthemes,
+	ggpubr,
+	RColorBrewer
 Encoding: UTF-8
 LazyData: true
+Imports: 
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 URL: https://github.com/peterjuv/myHelpers

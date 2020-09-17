@@ -1,6 +1,6 @@
-#' myHelpers: General tools for wirking with R
+#' myHelpers: Misc helper functions for R
 #'
-#' General tools for wirking with R
+#' Misc helper functions for R
 #' 
 #' @author Peter Juvan, \email{peter.juvan@gmail.com}
 #' @docType package
@@ -21,11 +21,14 @@ NULL
 #' 
 #' 2019-10-13 for OBV
 #' @param varColor variable for colors in boxplots
+#' @import dplyr
+#' @importFrom ggplot2 ggplot aes_string geom_boxplot geom_jitter
+#' @importFrom ggpubr theme_pubr stat_compare_means
 #' @export
 write_boxplot_descStat <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=NULL, varColor=NA, statMethod=NULL) {
-  require(dplyr)
-  require(ggplot2)
-  require(ggpubr)
+  # require(dplyr)
+  # require(ggplot2)
+  # require(ggpubr)
   numVars <- unlist(lapply(data, is.numeric))
   numVars[names(numVars) %in% varsExclude] <- FALSE
   numNames <- names(numVars[numVars])
@@ -55,7 +58,6 @@ write_boxplot_descStat <- function(data, fNameMid, folder=".", varsExclude=c(), 
       print(gg)
     }
     dev.off()
-    
   }
 }
 
@@ -99,6 +101,7 @@ plot_corr <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=N
 ###############
 
 #' Write a table with rownames using write.table
+#' 
 #' @export
 write.table.rowNames <- function(x, col1name="rowNames", quote=F, sep="\t", row.names=F, col.names=T, ...) {
   xx <- cbind("rowNames"=rownames(x), x)
@@ -225,10 +228,10 @@ defactor <- function(fac) {
 #'     #as.character((sapply(as.character(d), function(cd) {d_int[cd]})))
 #'     as.character(d_int[as.character(d)])
 #' }
+#' @importFrom infotheo discretize
 #' @export
 discretize_namedIntervals <- function(X,...) {
-  require(infotheo)
-  d <- infotheo::discretize(X,...)
+  d <- discretize(X,...)
   Xf <- as.data.frame(X)
   m <- list(); M <- list()
   for (nm in names(d)) {
@@ -254,9 +257,9 @@ discretize_namedIntervals <- function(X,...) {
 #' @param time0 ???
 #' @param nbins Number of intervals
 #' @return Character vector of discretized time intervals in form "H:MM-H:MM"
+#' @importFrom infotheo discretize
 #' @export
 discretizeTime_equalInterval <- function(times, time0, nbins) {
-  require(infotheo)
   CT_M <- difftime(times, rep(time0, length(times)), units="mins")
   CT_EqT <- discretize(CT_M, nbins=nbins, disc="equalwidth")$X
   CTmin <- tapply(CT_M,CT_EqT,min)
@@ -271,6 +274,7 @@ discretizeTime_equalInterval <- function(times, time0, nbins) {
 }
 
 #' Capitalize words
+#' 
 #' @export
 capwords <- function(s, strict = FALSE) {
   cap <- function(s) paste(toupper(substring(s,1,1)),
@@ -279,25 +283,26 @@ capwords <- function(s, strict = FALSE) {
   sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
 }
 
+
 ###############
 #### PLOTS ####
 ###############
 
-
-#' MDS by columns and optional plot
+#' MDS by columns and optional plot from package MASS 
 #' 
-#' Uses isoIMS
+#' Uses MASS::isoMDS or MASS::sammon
 #' Similar to limma::plotMDS, except that is uses all parameters for distance calculation, 
 #' while limma uses only top=XX genes
 #' @param data Matrix-like object to MDS (and plot) distances between columns
 #' @param scale Logical scale data; standardize together with center 
 #' @param center Logical center data; standardize together with scale
-#' @param method Passed to \code{dist(...)}, must be one of "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski"
-#' @param p Power of the Minkowski distance, passed to \code{dist(...)} and \code{isoMDS(...)}
-#' @param k Desired dimension for the solution, passed to \code{cmdscale(...)} through \code{isoMDS}
-#' @param maxit Passed to \code{isoMDS}, 
-#' @param trace Passed to \code{isoMDS}, 
-#' @param tol Passed to \code{isoMDS}, 
+#' @param method Distance metrics, passed to \code{dist(...)}, must be one of "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski"
+#' @param FUN MDS function from MASS, default "isoMDS", alternative "sammon"
+#' @param p Power of the Minkowski distance, passed to distance calculation \code{dist(...)} and \code{isoMDS(...)}
+#' @param k Desired dimension for the solution, passed to \code{cmdscale(...)} through \code{FUN}
+#' @param maxit Max number of iterations, passed to \code{isoMDS(maxit)} or \code{sammon(niter = maxit)}, 
+#' @param trace Print trace, passed to \code{FUN()}, 
+#' @param tol Tolerance, passed to \code{FUN()}, 
 #' @param plot Logical, plot using R, default FALSE
 #' @param labels Character vector of alternative column names, default \code{names(data)}
 #' @param col Colors of labels
@@ -307,13 +312,13 @@ capwords <- function(s, strict = FALSE) {
 #' @param xlab X-axis label
 #' @param ylab Y-axis label
 #' @param ... Passed to \code{plot(...)}
-#' @return A k-column vector of the fitted configuration from \code{isoMDS}
-#' @rdname isoMDScols
+#' @return A k-column vector of the fitted configuration from \code{FUN()}
+#' @rdname MASS_MDScols
 #' @export
-isoMDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", p = 2, 
+MASS_MDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", FUN = "isoMDS", p = 2, 
   k = 2, maxit = 50, trace = TRUE, tol = 1e-3, plot = FALSE, labels = names(data), 
   col=NULL, cex=1, main=NULL, cex.main=1, xlab="Coordinate 1", ylab="Coordinate 2", ...) {  
-  require(MASS)
+  assertthat::assert_that(is.numeric(p) & is.numeric(k) & is.numeric(maxit) & is.logical(trace) & is.numeric(tol))
   if(scale) { 
     if(center) mainStdUsed <- "standardized"
     else       mainStdUsed <- "scaled"
@@ -323,10 +328,16 @@ isoMDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", p 
   }
   scTdata <- scale(t(data), scale=scale, center=center)
   dist9 <- dist(scTdata, method = method, p = p)
-  fit9 <- isoMDS(dist9, k = k, maxit = maxit, trace = trace, tol = tol, p = p)
+  if (FUN == "isoMDS")
+    callMDS <- rlang::call2(FUN, dist9, k = k, maxit = maxit, trace = trace, tol = tol, p = p, .ns="MASS")
+  else if (FUN == "sammon")
+    callMDS <- rlang::call2(FUN, dist9, k = k, niter = maxit, trace = trace, tol = tol, .ns="MASS")
+  else 
+    abort(paste(FUN, "not part of namespace MASS"))
+  fit9 <- eval(callMDS)
   if (plot) {
     if (!is.null(main) & main==TRUE)
-        main <- paste("isoMDS", mainStdUsed, method, dim(data)[[2]], "objects,", dim(data)[[1]], mainStdUsed, "parameters")
+        main <- paste(FUN, mainStdUsed, method, dim(data)[[2]], "objects,", dim(data)[[1]], "parameters")
     plot(fit9$points[,1], fit9$points[,2], type="n", xlab=xlab, ylab=ylab, ...)
     text(fit9$points[,1], fit9$points[,2], labels=labels, cex=cex, col=col)
     title(main=main, cex.main=cex.main)
@@ -338,10 +349,10 @@ isoMDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", p 
 #' 
 #' @param data Pased to plot Logical, plot using R, default TRUE
 #' @param plot Logical, plot using R, default TRUE
-#' @rdname isoMDScols
+#' @rdname MASS_MDScols
 #' @export
 plotIsoMDS <- function(data, plot = TRUE, ...) {
-  invisible(isoMDScols(data, plot = plot, ...))
+  invisible(MASS_MDScols(data, FUN = "isoMDS", plot = plot, ...))
 } 
 
 

@@ -284,30 +284,64 @@ capwords <- function(s, strict = FALSE) {
 ###############
 
 
-#' Plot MDS that replaces limma::plotMDS
+#' MDS by columns and optional plot
 #' 
 #' Uses isoIMS
 #' Similar to limma::plotMDS, except that is uses all parameters for distance calculation, 
-#' while limma uses only top=XX genes, but XX cannot be set
-#' @param main If TRUE, title is generated automatically; default NULL, string othervise
+#' while limma uses only top=XX genes
+#' @param data Matrix-like object to MDS (and plot) distances between columns
+#' @param scale Logical scale data; standardize together with center 
+#' @param center Logical center data; standardize together with scale
+#' @param method Passed to \code{dist(...)}, must be one of "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski"
+#' @param p Power of the Minkowski distance, passed to \code{dist(...)} and \code{isoMDS(...)}
+#' @param k Desired dimension for the solution, passed to \code{cmdscale(...)} through \code{isoMDS}
+#' @param maxit Passed to \code{isoMDS}, 
+#' @param trace Passed to \code{isoMDS}, 
+#' @param tol Passed to \code{isoMDS}, 
+#' @param plot Logical, plot using R, default FALSE
+#' @param labels Character vector of alternative column names, default \code{names(data)}
+#' @param col Colors of labels
+#' @param cex Size of labels
+#' @param main String or TRUE to generate title generated automatically; default NULL
+#' @param cex.main Size of title 
+#' @param xlab X-axis label
+#' @param ylab Y-axis label
+#' @param ... Passed to \code{plot(...)}
+#' @return A k-column vector of the fitted configuration from \code{isoMDS}
+#' @rdname isoMDScols
 #' @export
-plotIsoMDS <- function(data9, scale=F, center=F, labels=names(data9), col=NULL, cex=1, main=NULL, cex.main=1, xlab="Coordinate 1", ylab="Coordinate 2", ...) {
-  mainStdUsed <- "non-standardized"
-  if(scale) { if(center) {mainStdUsed<-"standardized"} else {mainStdUsed<-"scaled"}} else {if(center) {mainStdUsed<-"centered"}}
-  scTdata9 <- scale(t(data9), scale=scale, center=center)
-  dist9 <- dist(scTdata9)
+isoMDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", p = 2, 
+  k = 2, maxit = 50, trace = TRUE, tol = 1e-3, plot = FALSE, labels = names(data), 
+  col=NULL, cex=1, main=NULL, cex.main=1, xlab="Coordinate 1", ylab="Coordinate 2", ...) {  
   require(MASS)
-  fit9 <- isoMDS(dist9, k=2)
-  if (!is.null(main)) {
-    if (main==T) {
-      myMain <- paste("isoMDS", dim(data9)[[2]], "objects,", dim(data9)[[1]], mainStdUsed, "parameters")
-    } else {
-      myMain <- main
-    }
+  if(scale) { 
+    if(center) mainStdUsed <- "standardized"
+    else       mainStdUsed <- "scaled"
+  } else {
+    if(center) mainStdUsed <- "centered"
+    else       mainStdUsed <- "non-standardized"
   }
-  plot(fit9$points[,1], fit9$points[,2], type="n", xlab=xlab, ylab=ylab, ...)
-  text(fit9$points[,1], fit9$points[,2], labels=labels, cex=cex, col=col)
-  title(main=myMain, cex.main=cex.main)
+  scTdata <- scale(t(data), scale=scale, center=center)
+  dist9 <- dist(scTdata, method = method, p = p)
+  fit9 <- isoMDS(dist9, k = k, maxit = maxit, trace = trace, tol = tol, p = p)
+  if (plot) {
+    if (!is.null(main) & main==TRUE)
+        main <- paste("isoMDS", mainStdUsed, method, dim(data)[[2]], "objects,", dim(data)[[1]], mainStdUsed, "parameters")
+    plot(fit9$points[,1], fit9$points[,2], type="n", xlab=xlab, ylab=ylab, ...)
+    text(fit9$points[,1], fit9$points[,2], labels=labels, cex=cex, col=col)
+    title(main=main, cex.main=cex.main)
+  }
+  return(fit9$points)
+}
+
+#' Plot MDS, alternative name for backward compatibility
+#' 
+#' @param data Pased to plot Logical, plot using R, default TRUE
+#' @param plot Logical, plot using R, default TRUE
+#' @rdname isoMDScols
+#' @export
+plotIsoMDS <- function(data, plot = TRUE, ...) {
+  invisible(isoMDScols(data, plot = plot, ...))
 } 
 
 

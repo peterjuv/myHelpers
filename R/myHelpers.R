@@ -67,6 +67,7 @@ write_boxplot_descStat <- function(data, fNameMid, folder=".", varsExclude=c(), 
 #' uses cor() and corrplot.mixed()
 #' 
 #' @section Implementation_old:
+#' \dontrun{
 #' plot_corr <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=NULL, order="AOE", width=12, height=12) {
 #'   ## 2019-10-13 for OBV
 #'   ## uses cor() and corrplot.mixed
@@ -80,6 +81,7 @@ write_boxplot_descStat <- function(data, fNameMid, folder=".", varsExclude=c(), 
 #'   colnames(cors) <- rownames(cors) <- numNames
 #'   corrplot.mixed(cors, order=order)
 #'   dev.off()
+#' }
 #' }
 #' @export
 plot_corr <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=NULL, orders=c("AOE", "original"), wh=12, ...) {
@@ -213,6 +215,7 @@ defactor <- function(fac) {
 #' @param disc Default "equalfreq"
 #' @param nbins Default NROW(X)^(1/3)
 #' @section Old implementation:
+#' \dontrun{
 #' discretize_namedIntervals_vector <- function(X,...) {
 #'     ## See infotheo::discretize for parameters; defaults are: disc="equalfreq", nbins=sqrt(NROW(x)).
 #'     ## Returns discretized data in the form of intervals min-max.
@@ -227,6 +230,7 @@ defactor <- function(fac) {
 #'     browser()
 #'     #as.character((sapply(as.character(d), function(cd) {d_int[cd]})))
 #'     as.character(d_int[as.character(d)])
+#' }
 #' }
 #' @importFrom infotheo discretize
 #' @export
@@ -309,9 +313,7 @@ capwords <- function(s, strict = FALSE) {
 #' @param cex Size of labels
 #' @param main String or TRUE to generate title generated automatically; default NULL
 #' @param cex.main Size of title 
-#' @param xlab X-axis label
-#' @param ylab Y-axis label
-#' @param ... Passed to \code{plot(...)}
+#' @inheritParams graphics::plot
 #' @return A k-column vector of the fitted configuration from \code{FUN()}
 #' @rdname MASS_MDScols
 #' @export
@@ -347,12 +349,11 @@ MASS_MDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", 
 
 #' Plot MDS, alternative name for backward compatibility
 #' 
-#' @param data Pased to plot Logical, plot using R, default TRUE
-#' @param plot Logical, plot using R, default TRUE
+#' @inheritParams MASS_MDScols
 #' @rdname MASS_MDScols
 #' @export
-plotIsoMDS <- function(data, plot = TRUE, ...) {
-  invisible(MASS_MDScols(data, FUN = "isoMDS", plot = plot, ...))
+plotIsoMDS <- function(FUN = "isoMDS", plot = TRUE, ...) {
+  invisible(MASS_MDScols(FUN = FUN, plot = plot, ...))
 } 
 
 
@@ -383,12 +384,15 @@ multiEffectPlot <- function(model, effectNames=c("anova", "summary"), OR=FALSE, 
 
 #' Logistic Regression boxplot
 #' 
+#' Developed for OBV 2019-10-13
 #' @section Old implementation:
+#' \dontrun{
 #' plotBinary <- function (X, Y, ...) {
 #'   plot(X, jitter(Y, factor = 0.1), col = rgb(0, 0, 0, 0.5), pch = 19, ylim = c(-0.2, 1.2), ...)
 #'   boxplot(X ~ Y, horizontal = TRUE, notch = TRUE, add = TRUE,
 #'           at = c(-0.1, 1.1), width = c(0.1, 0.1), col = "grey",
 #'           boxwex = 0.1, yaxt = "n")
+#' }
 #' }
 #' @export
 ggBinary <- function (data1, X, Y, color, xlab, ylab, notch=FALSE, ...) {

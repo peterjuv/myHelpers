@@ -7,15 +7,17 @@
 ggBinary(data1, X, Y, color, xlab, ylab, notch = FALSE, ...)
 }
 \description{
-Logistic Regression boxplot
+Developed for OBV 2019-10-13
 }
 \section{Old implementation}{
 
+\dontrun{
 plotBinary <- function (X, Y, ...) {
-plot(X, jitter(Y, factor = 0.1), col = rgb(0, 0, 0, 0.5), pch = 19, ylim = c(-0.2, 1.2), ...)
-boxplot(X ~ Y, horizontal = TRUE, notch = TRUE, add = TRUE,
-at = c(-0.1, 1.1), width = c(0.1, 0.1), col = "grey",
-boxwex = 0.1, yaxt = "n")
+  plot(X, jitter(Y, factor = 0.1), col = rgb(0, 0, 0, 0.5), pch = 19, ylim = c(-0.2, 1.2), ...)
+  boxplot(X ~ Y, horizontal = TRUE, notch = TRUE, add = TRUE,
+          at = c(-0.1, 1.1), width = c(0.1, 0.1), col = "grey",
+          boxwex = 0.1, yaxt = "n")
+}
 }
 }
 

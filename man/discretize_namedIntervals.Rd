@@ -18,20 +18,22 @@ See infotheo::discretize for parameters; defaults are:
 }
 \section{Old implementation}{
 
+\dontrun{
 discretize_namedIntervals_vector <- function(X,...) {
-## See infotheo::discretize for parameters; defaults are: disc="equalfreq", nbins=sqrt(NROW(x)).
-## Returns discretized data in the form of intervals min-max.
-require(infotheo)
-d<- infotheo::discretize(X,...)$X
-m<-tapply(X,d,min)
-M<-tapply(X,d,max)
-d_int <- paste0(format(m), "-", format(M))
-names(d_int) <- names(m)
-d_int\link{m==M} <- format(m)\link{m==M}
-#d_int\link{d}
-browser()
-#as.character((sapply(as.character(d), function(cd) {d_int\link{cd}})))
-as.character(d_int\link{as.character(d)})
+    ## See infotheo::discretize for parameters; defaults are: disc="equalfreq", nbins=sqrt(NROW(x)).
+    ## Returns discretized data in the form of intervals min-max.
+    require(infotheo)
+    d<- infotheo::discretize(X,...)$X
+    m<-tapply(X,d,min)
+    M<-tapply(X,d,max)
+    d_int <- paste0(format(m), "-", format(M))
+    names(d_int) <- names(m)
+    d_int[m==M] <- format(m)[m==M]
+    #d_int[d]
+    browser()
+    #as.character((sapply(as.character(d), function(cd) {d_int[cd]})))
+    as.character(d_int[as.character(d)])
+}
 }
 }
 

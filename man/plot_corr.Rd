@@ -21,22 +21,20 @@ uses cor() and corrplot.mixed()
 }
 \section{Implementation_old}{
 
+\dontrun{
 plot_corr <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=NULL, order="AOE", width=12, height=12) {
-\subsection{2019-10-13 for OBV}{
-}
-
-\subsection{uses cor() and corrplot.mixed}{
-
-require(corrplot)
-numVars <- unlist(lapply(data, is.numeric))
-numVars\link{names(numVars) \%in\% varsExclude} <- FALSE
-numNames <- names(numVars\link{numVars})
-if (!is.null(varsInclude)) numNames <- intersect(varsInclude, numNames)
-pdf(file.path(folder,paste0("corrplot_",fNameMid,"_",deparse(substitute(data)),".pdf")),width, height)
-cors <- cor(data\link{, numNames}, use="na.or.complete")
-colnames(cors) <- rownames(cors) <- numNames
-corrplot.mixed(cors, order=order)
-dev.off()
+  ## 2019-10-13 for OBV
+  ## uses cor() and corrplot.mixed
+  require(corrplot)
+  numVars <- unlist(lapply(data, is.numeric))
+  numVars[names(numVars) %in% varsExclude] <- FALSE
+  numNames <- names(numVars[numVars])
+  if (!is.null(varsInclude)) numNames <- intersect(varsInclude, numNames)
+  pdf(file.path(folder,paste0("corrplot_",fNameMid,"_",deparse(substitute(data)),".pdf")),width, height)
+  cors <- cor(data[, numNames], use="na.or.complete")
+  colnames(cors) <- rownames(cors) <- numNames
+  corrplot.mixed(cors, order=order)
+  dev.off()
 }
 }
 }

@@ -24,6 +24,25 @@
 
 if (FALSE) {
 
+    ## MDScols
+    # MDScols <- function(data, scale=FALSE, center=FALSE, FUN = "isoMDS", p = 2, selection = "pairwise", top = 500,
+    #   k = 2, maxit = 50, trace = TRUE, tol = 1e-3, plot = FALSE, labels = names(data), 
+    #   col=NULL, cex=1, main=NULL, cex.main=1, xlab="Coordinate 1", ylab="Coordinate 2", ...)
+    das <- dataRG$Mproc %>% as_tibble %>% slice(20000:50000)
+    mmc1 <- MDScols(das, FUN = "cmdscale", selection=NULL)
+    mmc2 <- MDScols(das, FUN = "cmdscale", selection="pairwise")
+    mmc3 <- MDScols(das, FUN = "cmdscale", selection="common")
+    mms1 <- MDScols(das, FUN = "sammon",   selection=NULL)
+    mms2 <- MDScols(das, FUN = "sammon",   selection="pairwise")
+    mms3 <- MDScols(das, FUN = "sammon",   selection="common")
+    mmi1 <- MDScols(das, FUN = "isoMDS",   selection=NULL)
+    mmi2 <- MDScols(das, FUN = "isoMDS",   selection="pairwise")
+    mmi3 <- MDScols(das, FUN = "isoMDS",   selection="common")
+    # Dist
+    dist2 <- dist(t(das), method = "minkowski", p = 2)
+
+
+
     ## brewPalFac2
     aa <- c("b","a","c","b")
     unique(aa)

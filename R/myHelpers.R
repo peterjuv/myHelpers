@@ -292,7 +292,102 @@ capwords <- function(s, strict = FALSE) {
 #### PLOTS ####
 ###############
 
-#' MDS by columns and optional plot from package MASS 
+#' MDS by columns and optional plot using Minkowski metrics
+#' 
+#' Parametric (\code{stats::cmdscale()}) and non-parametric MDS (\code{MASS::isoMDS()} or \code{MASS::sammon()})
+#' Data may be scales and/or centered before distance calculation.
+#' Distances are calculated between columns on a (possibly subset) of rows.
+#' Similar to limma::plotMDS in terms of subseting rows, but it allows for all rows for distance calculation, while limma uses only top=XX genes
+#' @param data Matrix-like object to MDS (and plot) distances between columns
+#' @param scale Logical scale data; standardize together with center 
+#' @param center Logical center data; standardize together with scale
+#' @param FUN Character MDS function, can be either "cmdscale" from package:stats, or isoMDS or sammon form package:MASS
+#' @param p Power of the Minkowski distance, passed to distance calculation \code{dist(...)} and \code{isoMDS(...)}
+#' @param selection Character selection of rows (either "pairwise" or "common" or NULL for using all rows; default "pairwise"
+#' @param top Integer number of rows for distance calculation, default 500
+#' @param k Desired dimension for the solution, passed to \code{FUN}
+#' @param maxit Max number of iterations, passed to \code{isoMDS(maxit)} or \code{sammon(niter = maxit)}
+#' @param trace Print trace, passed to \code{isoMDS(maxit)} or \code{sammon()}
+#' @param tol Tolerance, passed to \code{isoMDS(maxit)} or \code{sammon()}
+#' @param plot Logical, plot using R, default FALSE
+#' @param labels Character vector of alternative column names, default \code{names(data)}
+#' @param col Colors of labels, default NULL
+#' @param cex Size of labels, default 1
+#' @param main Character or NULL (default, no title) or TRUE to generate title automatically
+#' @param cex.main Size of title, default 1
+#' @inheritParams graphics::plot
+#' @return A k-column vector of the fitted configuration from \code{FUN()}
+#' @rdname MDScols
+#' @export
+MDScols <- function(data, scale=FALSE, center=FALSE, FUN = "isoMDS", p = 2, selection = "pairwise", top = 500,
+  k = 2, maxit = 50, trace = TRUE, tol = 1e-4, plot = FALSE, labels = names(data), 
+  col=NULL, cex=1, main=NULL, cex.main=1, xlab="Coordinate 1", ylab="Coordinate 2", ...) {  
+  assertthat::assert_that(is.numeric(p) & is.numeric(k) & is.numeric(maxit) & is.logical(trace) & is.numeric(tol))
+  assertthat::assert_that(is.null(selection) || selection %in% c("pairwise", "common"))
+  if(scale) { 
+    if(center) mainStdUsed <- "standardized"
+    else       mainStdUsed <- "scaled"
+  } else {
+    if(center) mainStdUsed <- "centered"
+    else       mainStdUsed <- "non-standardized"
+  }
+  xt <- scale(t(data), scale=scale, center=center)
+  # Distance measure is p-root of sum of top absolute deviations to the power of p
+  if (is.null(selection))
+    dd <- dist(xt, method = "minkowski", p = p)
+  else {
+    # Dist by selection of rows 
+    # Note that the code is from limma::plotMDS.R and that it operates on columns; therefore we transpose data again
+    x <- t(xt)
+    nprobes <- nrow(x)
+    top <- min(top,nprobes)
+    nsamples <- ncol(x)
+    cn <- colnames(x)
+    dd <- matrix(0,nrow=nsamples,ncol=nsamples,dimnames=list(cn,cn))
+    if(selection=="pairwise") {
+      # Different genes (rows) are selected for each pair, based on tob absolute deviations for each pair of arrays
+      topindex <- nprobes-top+1L
+      for (i in 2L:(nsamples))
+        for (j in 1L:(i-1L))
+          dd[i,j]=(sum(sort.int(abs(x[,i]-x[,j])^p,partial=topindex)[topindex:nprobes]))^(1/p)
+    } else {
+      # Same genes (rows) used for all comparisons; rows with the largest deviation from the mean column (=sample) are selected
+      if(nprobes > top) {
+        s <- rowMeans(abs(x-rowMeans(x))^p)
+        o <- order(s,decreasing=TRUE)
+        x <- x[o[1L:top],,drop=FALSE]
+      }
+      for (i in 2L:(nsamples))
+        dd[i,1L:(i-1L)]=(colSums(abs(x[,i]-x[,1:(i-1),drop=FALSE])^p))^(1/p)
+   }
+    dd <- as.dist(dd)
+  }
+  # Parametric (=initial) fit
+  fitCmdscale <- suppressWarnings(stats::cmdscale(dd, k=k))
+  if (FUN == "isoMDS")
+    fitMDS <- eval(rlang::call2(FUN, y=fitCmdscale, dd, k=k, maxit=maxit, trace=trace, tol=tol, p=p, .ns="MASS"))$points
+  else if (FUN == "sammon")
+    fitMDS <- eval(rlang::call2(FUN, y=fitCmdscale, dd, k=k, niter=maxit, trace=trace, tol=tol,      .ns="MASS"))$points
+  else if (FUN == "cmdscale")
+    fitMDS <- fitCmdscale
+  else 
+    abort(paste(FUN, "not implemented or a valid MDS function"))
+  if (plot) {
+    if (!is.null(main) & main==TRUE) {
+      if (is.null(selection))
+        main <- paste(FUN, mainStdUsed, Minkowski, p, ",", dim(data)[[2]], "objects,", dim(data)[[1]], "parameters")
+      else
+        main <- paste(FUN, mainStdUsed, Minkowski, p, ",", dim(data)[[2]], "objects, top", top, selection, "parameters")
+    }
+    plot(fitMDS[,1], fitMDS[,2], type="n", xlab=xlab, ylab=ylab, ...)
+    text(fitMDS[,1], fitMDS[,2], labels=labels, cex=cex, col=col)
+    title(main=main, cex.main=cex.main)
+  }
+  return(fitMDS)
+}
+
+
+#' Depricated: Non-parametric MDS by columns and optional plot from package MASS 
 #' 
 #' Uses MASS::isoMDS or MASS::sammon
 #' Similar to limma::plotMDS, except that is uses all parameters for distance calculation, 
@@ -315,7 +410,7 @@ capwords <- function(s, strict = FALSE) {
 #' @param cex.main Size of title 
 #' @inheritParams graphics::plot
 #' @return A k-column vector of the fitted configuration from \code{FUN()}
-#' @rdname MASS_MDScols
+#' @rdname MDScols
 #' @export
 MASS_MDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", FUN = "isoMDS", p = 2, 
   k = 2, maxit = 50, trace = TRUE, tol = 1e-3, plot = FALSE, labels = names(data), 
@@ -347,13 +442,13 @@ MASS_MDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", 
   return(fit9$points)
 }
 
-#' Plot MDS, alternative name for backward compatibility
+#' Plot MDS, alternative name and default parameters for backward compatibility
 #' 
-#' @inheritParams MASS_MDScols
-#' @rdname MASS_MDScols
+#' @inheritParams MDScols
+#' @rdname MDScols
 #' @export
-plotIsoMDS <- function(FUN = "isoMDS", plot = TRUE, ...) {
-  invisible(MASS_MDScols(FUN = FUN, plot = plot, ...))
+plotIsoMDS <- function(FUN = "isoMDS", plot = TRUE, selection = NULL, ...) {
+  invisible(MDScols(FUN=FUN, plot=plot, selectiuon=selection...))
 } 
 
 

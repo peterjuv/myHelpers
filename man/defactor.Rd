@@ -10,12 +10,12 @@ defactorChr(fac)
 defactor(fac)
 }
 \arguments{
-\item{fac}{Factor with optional with names}
+\item{fac}{Factor (or vector) with optional with names}
 }
 \value{
-Character vector with optional names
+Character vector with optional names; as is if not a factor
 
-Vector with optional names
+Vector (character, numeric or logical) with optional names; as is if not a factor
 }
 \description{
 Convert a factor with names to a named character vector
@@ -23,12 +23,16 @@ Convert a factor with names to a named character vector
 Convert a factor with names to a named vector and converts to logical or numeric if possible
 }
 \examples{
+defactorChr(c(1,"a"))
 defactorChr(factor(c(1,"a")))
+defactorChr(setNames(c(1,2,3),c("a","b","c")))
 defactorChr(factor(setNames(c(1,2,3),c("a","b","c"))))
 defactorChr(factor(setNames(c("1","2","3"),c("a","b","c"))) )
 defactorChr(factor(setNames(c("1a","2b","3c"),c("a","b","c"))))
 defactorChr(factor(setNames(c(TRUE, FALSE), c("t","f"))))
+defactor(c(1,"a"))
 defactor(factor(c(1,"a")))
+defactor(setNames(c(1,2,3),c("a","b","c")))
 defactor(factor(setNames(c(1,2,3),c("a","b","c"))))
 defactor(factor(setNames(c("1","2","3"),c("a","b","c"))) )
 defactor(factor(setNames(c("1a","2b","3c"),c("a","b","c"))))

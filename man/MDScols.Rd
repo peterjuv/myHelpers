@@ -64,7 +64,7 @@ plotIsoMDS(FUN = "isoMDS", plot = TRUE, selection = NULL, ...)
 
 \item{p}{Power of the Minkowski distance, passed to distance calculation \code{dist(...)} and \code{isoMDS(...)}}
 
-\item{selection}{Character selection of rows (either "pairwise" or "common" or NULL for using all rows; default "pairwise"}
+\item{selection}{Character "pairwise" or "common" for selection of rows or NULL for using all rows; default "pairwise"}
 
 \item{top}{Integer number of rows for distance calculation, default 500}
 
@@ -112,3 +112,7 @@ Uses MASS::isoMDS or MASS::sammon
 Similar to limma::plotMDS, except that is uses all parameters for distance calculation,
 while limma uses only top=XX genes
 }
+\section{TODO}{
+ add parameter dim.plot
+}
+

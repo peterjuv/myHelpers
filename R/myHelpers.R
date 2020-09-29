@@ -173,10 +173,12 @@ brewPalCont <- function(x, n=9, name="OrRd", digits=2, namesFrom=NULL) {
 
 #' Convert a factor with names to a named character vector
 #' 
-#' @param fac Factor with optional with names
-#' @return Character vector with optional names
+#' @param fac Factor (or vector) with optional with names
+#' @return Character vector with optional names; as is if not a factor
 #' @examples
+#' defactorChr(c(1,"a"))
 #' defactorChr(factor(c(1,"a")))
+#' defactorChr(setNames(c(1,2,3),c("a","b","c")))
 #' defactorChr(factor(setNames(c(1,2,3),c("a","b","c"))))
 #' defactorChr(factor(setNames(c("1","2","3"),c("a","b","c"))) )
 #' defactorChr(factor(setNames(c("1a","2b","3c"),c("a","b","c"))))
@@ -184,14 +186,19 @@ brewPalCont <- function(x, n=9, name="OrRd", digits=2, namesFrom=NULL) {
 #' @rdname defactor
 #' @export
 defactorChr <- function(fac) {
-  setNames(levels(fac)[as.integer(fac)], names(fac))
+  if (is.factor(fac))
+    return(setNames(levels(fac)[as.integer(fac)], names(fac)))
+  else return(fac)
 }
 
 #' Convert a factor with names to a named vector and converts to logical or numeric if possible
 #' 
-#' @return Vector with optional names 
+#' @inheritParams defactorChr
+#' @return Vector (character, numeric or logical) with optional names; as is if not a factor
 #' @examples
+#' defactor(c(1,"a"))
 #' defactor(factor(c(1,"a")))
+#' defactor(setNames(c(1,2,3),c("a","b","c")))
 #' defactor(factor(setNames(c(1,2,3),c("a","b","c"))))
 #' defactor(factor(setNames(c("1","2","3"),c("a","b","c"))) )
 #' defactor(factor(setNames(c("1a","2b","3c"),c("a","b","c"))))
@@ -202,9 +209,9 @@ defactor <- function(fac) {
   dfac <- defactorChr(fac)
   testn <- suppressWarnings(as.numeric(dfac))
   testl <- suppressWarnings(as.logical(dfac))
-  if(all(!is.na(testn))) setNames(as.numeric(dfac), names(fac))
-  else if(all(!is.na(testl))) setNames(as.logical(dfac), names(fac))
-  else dfac
+  if(all(!is.na(testn))) return(setNames(as.numeric(dfac), names(fac)))
+  else if(all(!is.na(testl))) return(setNames(as.logical(dfac), names(fac)))
+  else return(dfac)
 }
 
 
@@ -303,7 +310,7 @@ capwords <- function(s, strict = FALSE) {
 #' @param center Logical center data; standardize together with scale
 #' @param FUN Character MDS function, can be either "cmdscale" from package:stats, or isoMDS or sammon form package:MASS
 #' @param p Power of the Minkowski distance, passed to distance calculation \code{dist(...)} and \code{isoMDS(...)}
-#' @param selection Character selection of rows (either "pairwise" or "common" or NULL for using all rows; default "pairwise"
+#' @param selection Character "pairwise" or "common" for selection of rows or NULL for using all rows; default "pairwise"
 #' @param top Integer number of rows for distance calculation, default 500
 #' @param k Desired dimension for the solution, passed to \code{FUN}
 #' @param maxit Max number of iterations, passed to \code{isoMDS(maxit)} or \code{sammon(niter = maxit)}
@@ -319,6 +326,7 @@ capwords <- function(s, strict = FALSE) {
 #' @return A k-column vector of the fitted configuration from \code{FUN()}
 #' @rdname MDScols
 #' @export
+#' @section TODO: add parameter dim.plot
 MDScols <- function(data, scale=FALSE, center=FALSE, FUN = "isoMDS", p = 2, selection = "pairwise", top = 500,
   k = 2, maxit = 50, trace = TRUE, tol = 1e-4, plot = FALSE, labels = names(data), 
   col=NULL, cex=1, main=NULL, cex.main=1, xlab="Coordinate 1", ylab="Coordinate 2", ...) {  

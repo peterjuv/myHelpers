@@ -128,18 +128,21 @@ Convert a factor with names to a named vector and converts to logical or numeric
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>fac</th>
-      <td><p>Factor with optional with names</p></td>
+      <td><p>Factor (or vector) with optional with names</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Character vector with optional names</p>
-<p>Vector with optional names</p>
+    <p>Character vector with optional names; as is if not a factor</p>
+<p>Vector (character, numeric or logical) with optional names; as is if not a factor</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>defactorChr</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='st'>"a"</span>)))
-</div><div class='output co'>#&gt; [1] "1" "a"</div><div class='input'><span class='fu'>defactorChr</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>,<span class='st'>"b"</span>,<span class='st'>"c"</span>))))
+    <pre class="examples"><div class='input'><span class='fu'>defactorChr</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='st'>"a"</span>))
+</div><div class='output co'>#&gt; [1] "1" "a"</div><div class='input'><span class='fu'>defactorChr</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='st'>"a"</span>)))
+</div><div class='output co'>#&gt; [1] "1" "a"</div><div class='input'><span class='fu'>defactorChr</span>(<span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>,<span class='st'>"b"</span>,<span class='st'>"c"</span>)))
+</div><div class='output co'>#&gt; a b c 
+#&gt; 1 2 3 </div><div class='input'><span class='fu'>defactorChr</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>,<span class='st'>"b"</span>,<span class='st'>"c"</span>))))
 </div><div class='output co'>#&gt;   a   b   c 
 #&gt; "1" "2" "3" </div><div class='input'><span class='fu'>defactorChr</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"1"</span>,<span class='st'>"2"</span>,<span class='st'>"3"</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>,<span class='st'>"b"</span>,<span class='st'>"c"</span>))) )
 </div><div class='output co'>#&gt;   a   b   c 
@@ -147,8 +150,11 @@ Convert a factor with names to a named vector and converts to logical or numeric
 </div><div class='output co'>#&gt;    a    b    c 
 #&gt; "1a" "2b" "3c" </div><div class='input'><span class='fu'>defactorChr</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"t"</span>,<span class='st'>"f"</span>))))
 </div><div class='output co'>#&gt;       t       f 
-#&gt;  "TRUE" "FALSE" </div><div class='input'><span class='fu'>defactor</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='st'>"a"</span>)))
-</div><div class='output co'>#&gt; [1] "1" "a"</div><div class='input'><span class='fu'>defactor</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>,<span class='st'>"b"</span>,<span class='st'>"c"</span>))))
+#&gt;  "TRUE" "FALSE" </div><div class='input'><span class='fu'>defactor</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='st'>"a"</span>))
+</div><div class='output co'>#&gt; [1] "1" "a"</div><div class='input'><span class='fu'>defactor</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='st'>"a"</span>)))
+</div><div class='output co'>#&gt; [1] "1" "a"</div><div class='input'><span class='fu'>defactor</span>(<span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>,<span class='st'>"b"</span>,<span class='st'>"c"</span>)))
+</div><div class='output co'>#&gt; a b c 
+#&gt; 1 2 3 </div><div class='input'><span class='fu'>defactor</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>,<span class='fl'>3</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>,<span class='st'>"b"</span>,<span class='st'>"c"</span>))))
 </div><div class='output co'>#&gt; a b c 
 #&gt; 1 2 3 </div><div class='input'><span class='fu'>defactor</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"1"</span>,<span class='st'>"2"</span>,<span class='st'>"3"</span>),<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>,<span class='st'>"b"</span>,<span class='st'>"c"</span>))) )
 </div><div class='output co'>#&gt; a b c 

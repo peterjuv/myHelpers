@@ -173,7 +173,7 @@ brewPalCont <- function(x, n=9, name="OrRd", digits=2, namesFrom=NULL) {
 
 #' Convert a factor with names to a named character vector
 #' 
-#' @param fac Factor (or vector) with optional with names
+#' @rdname defactor
 #' @return Character vector with optional names; as is if not a factor
 #' @examples
 #' defactorChr(c(1,"a"))
@@ -183,7 +183,6 @@ brewPalCont <- function(x, n=9, name="OrRd", digits=2, namesFrom=NULL) {
 #' defactorChr(factor(setNames(c("1","2","3"),c("a","b","c"))) )
 #' defactorChr(factor(setNames(c("1a","2b","3c"),c("a","b","c"))))
 #' defactorChr(factor(setNames(c(TRUE, FALSE), c("t","f"))))
-#' @rdname defactor
 #' @export
 defactorChr <- function(fac) {
   if (is.factor(fac))
@@ -193,7 +192,7 @@ defactorChr <- function(fac) {
 
 #' Convert a factor with names to a named vector and converts to logical or numeric if possible
 #' 
-#' @inheritParams defactorChr
+#' @param fac Factor (or vector) with optional with names
 #' @return Vector (character, numeric or logical) with optional names; as is if not a factor
 #' @examples
 #' defactor(c(1,"a"))
@@ -203,7 +202,6 @@ defactorChr <- function(fac) {
 #' defactor(factor(setNames(c("1","2","3"),c("a","b","c"))) )
 #' defactor(factor(setNames(c("1a","2b","3c"),c("a","b","c"))))
 #' defactor(factor(setNames(c(TRUE, FALSE), c("t","f"))))
-#' @rdname defactor
 #' @export
 defactor <- function(fac) {
   dfac <- defactorChr(fac)
@@ -324,9 +322,8 @@ capwords <- function(s, strict = FALSE) {
 #' @param cex.main Size of title, default 1
 #' @inheritParams graphics::plot
 #' @return A k-column vector of the fitted configuration from \code{FUN()}
-#' @rdname MDScols
-#' @export
 #' @section TODO: add parameter dim.plot
+#' @export
 MDScols <- function(data, scale=FALSE, center=FALSE, FUN = "isoMDS", p = 2, selection = "pairwise", top = 500,
   k = 2, maxit = 50, trace = TRUE, tol = 1e-4, plot = FALSE, labels = names(data), 
   col=NULL, cex=1, main=NULL, cex.main=1, xlab="Coordinate 1", ylab="Coordinate 2", ...) {  
@@ -400,6 +397,7 @@ MDScols <- function(data, scale=FALSE, center=FALSE, FUN = "isoMDS", p = 2, sele
 #' Uses MASS::isoMDS or MASS::sammon
 #' Similar to limma::plotMDS, except that is uses all parameters for distance calculation, 
 #' while limma uses only top=XX genes
+#' @rdname MDScols
 #' @param data Matrix-like object to MDS (and plot) distances between columns
 #' @param scale Logical scale data; standardize together with center 
 #' @param center Logical center data; standardize together with scale
@@ -418,7 +416,6 @@ MDScols <- function(data, scale=FALSE, center=FALSE, FUN = "isoMDS", p = 2, sele
 #' @param cex.main Size of title 
 #' @inheritParams graphics::plot
 #' @return A k-column vector of the fitted configuration from \code{FUN()}
-#' @rdname MDScols
 #' @export
 MASS_MDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", FUN = "isoMDS", p = 2, 
   k = 2, maxit = 50, trace = TRUE, tol = 1e-3, plot = FALSE, labels = names(data), 
@@ -452,8 +449,8 @@ MASS_MDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", 
 
 #' Plot MDS, alternative name and default parameters for backward compatibility
 #' 
-#' @inheritParams MDScols
 #' @rdname MDScols
+#' @inheritParams MDScols
 #' @export
 plotIsoMDS <- function(FUN = "isoMDS", plot = TRUE, selection = NULL, ...) {
   invisible(MDScols(FUN=FUN, plot=plot, selectiuon=selection...))

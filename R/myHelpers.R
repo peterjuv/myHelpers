@@ -13,6 +13,30 @@
 #' @name myHelpers
 NULL
 
+##############
+#### Base ####
+##############
+
+#' Equivalent to setNames(object) for arrays
+#' 
+#' Sets the first component of dimnames(x)
+#' @param x A matrix, array or data frame
+#' @param rowNames New names for rows
+#' @return Input x with new row names
+#' @examples
+#' setRowNames(matrix(1:4, nrow=2, ncol=2), c("a","b"))
+#' setRowNames(array(1:8, dim=c(2,2,2)), c("a","b"))
+#' \dontrun{setRowNames(1:2, c("a","b")) # Error 'dimnames' applied to non-array}
+#' @section Implementation:
+#' Alternative way, does not work for data.frame:
+#' \code{function(x, rowNames) return(structure(x, dimnames=c(list(rowNames), dimnames(x)[-1])))}
+#' @export
+setRowNames <- function(x, rowNames) {
+    dimnames(x) <- c(list(rowNames), dimnames(x)[-1])
+    return(x)
+}
+
+
 ######################
 #### STAT + PLOTS ####
 ######################

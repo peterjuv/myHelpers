@@ -129,52 +129,52 @@ Similar to limma::plotMDS, except that is uses all parameters for distance calcu
 while limma uses only top=XX genes</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MDScols</span>(
-  <span class='kw'>data</span>,
-  scale = <span class='fl'>FALSE</span>,
-  center = <span class='fl'>FALSE</span>,
-  FUN = <span class='st'>"isoMDS"</span>,
-  p = <span class='fl'>2</span>,
-  selection = <span class='st'>"pairwise"</span>,
-  top = <span class='fl'>500</span>,
-  k = <span class='fl'>2</span>,
-  maxit = <span class='fl'>50</span>,
-  trace = <span class='fl'>TRUE</span>,
-  tol = <span class='fl'>1e-04</span>,
-  plot = <span class='fl'>FALSE</span>,
-  labels = <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='kw'>data</span>),
-  col = <span class='kw'>NULL</span>,
-  cex = <span class='fl'>1</span>,
-  main = <span class='kw'>NULL</span>,
-  cex.main = <span class='fl'>1</span>,
-  xlab = <span class='st'>"Coordinate 1"</span>,
-  ylab = <span class='st'>"Coordinate 2"</span>,
-  <span class='kw'>...</span>
-)
+    <pre class="usage"><span class='fu'>MDScols</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  scale <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  center <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  FUN <span class='op'>=</span> <span class='st'>"isoMDS"</span>,
+  p <span class='op'>=</span> <span class='fl'>2</span>,
+  selection <span class='op'>=</span> <span class='st'>"pairwise"</span>,
+  top <span class='op'>=</span> <span class='fl'>500</span>,
+  k <span class='op'>=</span> <span class='fl'>2</span>,
+  maxit <span class='op'>=</span> <span class='fl'>50</span>,
+  trace <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  tol <span class='op'>=</span> <span class='fl'>1e-04</span>,
+  plot <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  labels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>,
+  col <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cex <span class='op'>=</span> <span class='fl'>1</span>,
+  main <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cex.main <span class='op'>=</span> <span class='fl'>1</span>,
+  xlab <span class='op'>=</span> <span class='st'>"Coordinate 1"</span>,
+  ylab <span class='op'>=</span> <span class='st'>"Coordinate 2"</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
-<span class='fu'>MASS_MDScols</span>(
-  <span class='kw'>data</span>,
-  scale = <span class='fl'>FALSE</span>,
-  center = <span class='fl'>FALSE</span>,
-  method = <span class='st'>"euclidean"</span>,
-  FUN = <span class='st'>"isoMDS"</span>,
-  p = <span class='fl'>2</span>,
-  k = <span class='fl'>2</span>,
-  maxit = <span class='fl'>50</span>,
-  trace = <span class='fl'>TRUE</span>,
-  tol = <span class='fl'>0.001</span>,
-  plot = <span class='fl'>FALSE</span>,
-  labels = <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='kw'>data</span>),
-  col = <span class='kw'>NULL</span>,
-  cex = <span class='fl'>1</span>,
-  main = <span class='kw'>NULL</span>,
-  cex.main = <span class='fl'>1</span>,
-  xlab = <span class='st'>"Coordinate 1"</span>,
-  ylab = <span class='st'>"Coordinate 2"</span>,
-  <span class='kw'>...</span>
-)
+<span class='fu'>MASS_MDScols</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  scale <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  center <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  method <span class='op'>=</span> <span class='st'>"euclidean"</span>,
+  FUN <span class='op'>=</span> <span class='st'>"isoMDS"</span>,
+  p <span class='op'>=</span> <span class='fl'>2</span>,
+  k <span class='op'>=</span> <span class='fl'>2</span>,
+  maxit <span class='op'>=</span> <span class='fl'>50</span>,
+  trace <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  tol <span class='op'>=</span> <span class='fl'>0.001</span>,
+  plot <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  labels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>,
+  col <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cex <span class='op'>=</span> <span class='fl'>1</span>,
+  main <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cex.main <span class='op'>=</span> <span class='fl'>1</span>,
+  xlab <span class='op'>=</span> <span class='st'>"Coordinate 1"</span>,
+  ylab <span class='op'>=</span> <span class='st'>"Coordinate 2"</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
-<span class='fu'>plotIsoMDS</span>(FUN = <span class='st'>"isoMDS"</span>, plot = <span class='fl'>TRUE</span>, selection = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'>plotIsoMDS</span><span class='op'>(</span>FUN <span class='op'>=</span> <span class='st'>"isoMDS"</span>, plot <span class='op'>=</span> <span class='cn'>TRUE</span>, selection <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

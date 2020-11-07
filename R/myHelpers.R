@@ -4,6 +4,7 @@
 #' 
 #' @author Peter Juvan, \email{peter.juvan@gmail.com}
 #' @docType package
+#' @section Base
 #' @section STAT + PLOTS:
 #' @section Write:
 #' @section Colors:
@@ -25,7 +26,10 @@ NULL
 #' @return Input x with new row names
 #' @examples
 #' setRowNames(matrix(1:4, nrow=2, ncol=2), c("a","b"))
+#' setRowNames(matrix(1:4, nrow=2, ncol=2), NULL)
 #' setRowNames(array(1:8, dim=c(2,2,2)), c("a","b"))
+#' setRowNames(as.data.frame(matrix(1:4, nrow=2, ncol=2)), c("a","b"))
+#' \dontrun{setRowNames(as.data.frame(matrix(1:4, nrow=2, ncol=2)), NULL) # Is this a BUG?!}
 #' \dontrun{setRowNames(1:2, c("a","b")) # Error 'dimnames' applied to non-array}
 #' @section Implementation:
 #' Alternative way, does not work for data.frame:

@@ -7,6 +7,10 @@
 \description{
 Misc helper functions for R
 }
+\section{Base}{
+NA
+}
+
 \section{STAT + PLOTS}{
 
 }

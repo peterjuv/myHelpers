@@ -4,7 +4,15 @@
 \alias{brewPalCont}
 \title{Brew a color palette from a numerical vector x with optional names.}
 \usage{
-brewPalCont(x, n = 9, name = "OrRd", digits = 2, namesFrom = NULL)
+brewPalCont(
+  x,
+  n = 9,
+  name = "OrRd",
+  digits = 2,
+  namesFrom = NULL,
+  NAcolor = "#000000",
+  rev = TRUE
+)
 }
 \arguments{
 \item{x}{Numeric vector with optional names.}
@@ -16,6 +24,10 @@ brewPalCont(x, n = 9, name = "OrRd", digits = 2, namesFrom = NULL)
 \item{digits}{Number of digits in x to form categories for colors. May be negative to round to tens, hundreds, etc.}
 
 \item{namesFrom}{Vector of names to be added to colors; default is names(x) or x.}
+
+\item{NAcolor}{Color for NA values, default black #000000}
+
+\item{rev}{Revert colors, e.g. Rd to Or instead of Or to Rd; default TRUE}
 }
 \value{
 Named vector of colors of the same length as x.
@@ -25,4 +37,18 @@ Uses RColorBrewer palette names, default is OrRd with 9 colors
 Use more/less colors (n) for a bigger/smaller range, i.e. more/less extremes at each end.
 Use more/less digits for more/less categories of colors.
 If namesFrom given, add names to colors; otherwise, add names(x) or x.
+}
+\section{TODO}{
+
+Add parameter invertCols=FALSE to invert colors if TRUE (e.g., Red to Orange)
+}
+
+\examples{
+brewPalCont(10:20)
+brewPalCont(10:20, digits=-1)
+brewPalCont(10:20, n=3, digits=-1)
+brewPalCont(c(18,12,14,16,20,11,10,17,13,19,15), n=3, digits=-1)[as.character(10:20)]
+brewPalCont(c(10:14, 0,  16:20), n=3, digits=-1)
+brewPalCont(c(10:14, NA, 16:20), n=3, digits=-1)
+brewPalCont(c(10:14, NA, 16:20), n=3, digits=-1, rev=FALSE)
 }

@@ -185,13 +185,28 @@ brewPalFac <- function(x, n=9, name="OrRd", pull=NULL, namesFrom=NULL) {
 #' @param name Name of the RColorBrewer palette.
 #' @param digits Number of digits in x to form categories for colors. May be negative to round to tens, hundreds, etc.
 #' @param namesFrom Vector of names to be added to colors; default is names(x) or x.
+#' @param NAcolor Color for NA values, default black #000000
+#' @param rev Revert colors, e.g. Rd to Or instead of Or to Rd; default TRUE
 #' @return Named vector of colors of the same length as x.
+#' @examples
+#' brewPalCont(10:20)
+#' brewPalCont(10:20, digits=-1)
+#' brewPalCont(10:20, n=3, digits=-1)
+#' brewPalCont(c(18,12,14,16,20,11,10,17,13,19,15), n=3, digits=-1)[as.character(10:20)]
+#' brewPalCont(c(10:14, 0,  16:20), n=3, digits=-1)
+#' brewPalCont(c(10:14, NA, 16:20), n=3, digits=-1)
+#' brewPalCont(c(10:14, NA, 16:20), n=3, digits=-1, rev=FALSE)
 #' @export
-brewPalCont <- function(x, n=9, name="OrRd", digits=2, namesFrom=NULL) {
+#' @section TODO: 
+#'  Add parameter invertCols=FALSE to invert colors if TRUE (e.g., Red to Orange)
+brewPalCont <- function(x, n=9, name="OrRd", digits=2, namesFrom=NULL, NAcolor="#000000", rev=TRUE) {
     if (!is.null(namesFrom)) x <- setNames(x, namesFrom)
-    myPalette <- colorRampPalette(rev(RColorBrewer::brewer.pal(n, name)))
+    myBrew <- RColorBrewer::brewer.pal(n, name)
+    if (rev) myBrew <- rev(myBrew)
+    myPalette <- colorRampPalette(myBrew)
     xInd <- round(x*10**digits)
-    cols <- myPalette(max(xInd)-min(xInd)+1)[xInd-min(xInd)+1]
+    cols <- myPalette(max(xInd,na.rm=TRUE)-min(xInd,na.rm=TRUE)+1)[xInd-min(xInd,na.rm=TRUE)+1]
+    cols[is.na(cols)] <- NAcolor
     if (!is.null(names(x))) setNames(cols,names(x)) else setNames(cols,x)
 }
 

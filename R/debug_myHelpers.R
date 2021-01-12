@@ -183,5 +183,20 @@ if (FALSE) {
 
     (eb3 <- factor(cb3, levels=levels(db3)[qb3]))
     (e3 <-  factor(c3,  levels=levels(d3)[q3]))
+
+
+    ## brewPalCont using NA
+    x=c(10:14, NA, 16:20)
+    digits=-1
+    n=3
+    name="OrRd"
+    namesFrom=NULL
+    NAcolor="#000000"
+    if (!is.null(namesFrom)) x <- setNames(x, namesFrom)
+    myPalette <- colorRampPalette(rev(RColorBrewer::brewer.pal(n, name)))
+    xInd <- round(x*10**digits)
+    cols <- myPalette(max(xInd,na.rm=TRUE)-min(xInd,na.rm=TRUE)+1)[xInd-min(xInd,na.rm=TRUE)+1]
+    cols[is.na(cols)] <- NAcolor
+    if (!is.null(names(x))) setNames(cols,names(x)) else setNames(cols,x)
     
 }

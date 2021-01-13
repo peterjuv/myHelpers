@@ -6,8 +6,8 @@
 \usage{
 brewPalCont(
   x,
-  n = 9,
-  name = "OrRd",
+  n = 5,
+  name = "YlGn",
   digits = 2,
   namesFrom = NULL,
   NAcolor = "#000000",
@@ -17,9 +17,9 @@ brewPalCont(
 \arguments{
 \item{x}{Numeric vector with optional names.}
 
-\item{n}{Number of colors for RColorBrewer (depends on the name).}
+\item{n}{Number of colors for RColorBrewer (depends on the name). Default 5 is max for printer-friendly.}
 
-\item{name}{Name of the RColorBrewer palette.}
+\item{name}{Name of the RColorBrewer palette. Default YlGn is printer-friendly.}
 
 \item{digits}{Number of digits in x to form categories for colors. May be negative to round to tens, hundreds, etc.}
 

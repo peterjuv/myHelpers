@@ -181,8 +181,8 @@ brewPalFac <- function(x, n=9, name="OrRd", pull=NULL, namesFrom=NULL) {
 #' If namesFrom given, add names to colors; otherwise, add names(x) or x.
 #' 
 #' @param x Numeric vector with optional names.
-#' @param n Number of colors for RColorBrewer (depends on the name).
-#' @param name Name of the RColorBrewer palette.
+#' @param n Number of colors for RColorBrewer (depends on the name). Default 5 is max for printer-friendly.
+#' @param name Name of the RColorBrewer palette. Default YlGn is printer-friendly.
 #' @param digits Number of digits in x to form categories for colors. May be negative to round to tens, hundreds, etc.
 #' @param namesFrom Vector of names to be added to colors; default is names(x) or x.
 #' @param NAcolor Color for NA values, default black #000000
@@ -197,7 +197,7 @@ brewPalFac <- function(x, n=9, name="OrRd", pull=NULL, namesFrom=NULL) {
 #' brewPalCont(c(10:14, NA, 16:20), n=3, digits=-1)
 #' brewPalCont(c(10:14, NA, 16:20), n=3, digits=-1, rev=FALSE)
 #' @export
-brewPalCont <- function(x, n=9, name="OrRd", digits=2, namesFrom=NULL, NAcolor="#000000", rev=TRUE) {
+brewPalCont <- function(x, n=5, name="YlGn", digits=2, namesFrom=NULL, NAcolor="#000000", rev=TRUE) {
     if (!is.null(namesFrom)) x <- setNames(x, namesFrom)
     myBrew <- RColorBrewer::brewer.pal(n, name)
     if (rev) myBrew <- rev(myBrew)

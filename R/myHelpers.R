@@ -197,8 +197,6 @@ brewPalFac <- function(x, n=9, name="OrRd", pull=NULL, namesFrom=NULL) {
 #' brewPalCont(c(10:14, NA, 16:20), n=3, digits=-1)
 #' brewPalCont(c(10:14, NA, 16:20), n=3, digits=-1, rev=FALSE)
 #' @export
-#' @section TODO: 
-#'  Add parameter invertCols=FALSE to invert colors if TRUE (e.g., Red to Orange)
 brewPalCont <- function(x, n=9, name="OrRd", digits=2, namesFrom=NULL, NAcolor="#000000", rev=TRUE) {
     if (!is.null(namesFrom)) x <- setNames(x, namesFrom)
     myBrew <- RColorBrewer::brewer.pal(n, name)
@@ -207,7 +205,9 @@ brewPalCont <- function(x, n=9, name="OrRd", digits=2, namesFrom=NULL, NAcolor="
     xInd <- round(x*10**digits)
     cols <- myPalette(max(xInd,na.rm=TRUE)-min(xInd,na.rm=TRUE)+1)[xInd-min(xInd,na.rm=TRUE)+1]
     cols[is.na(cols)] <- NAcolor
-    if (!is.null(names(x))) setNames(cols,names(x)) else setNames(cols,x)
+    if (!is.null(names(x))) namesx <- names(x) else namesx <- x
+    namesx[is.na(namesx)] <- "<NA>"
+    setNames(cols,namesx)
 }
 
 #####################

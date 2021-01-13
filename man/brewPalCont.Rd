@@ -38,11 +38,6 @@ Use more/less colors (n) for a bigger/smaller range, i.e. more/less extremes at 
 Use more/less digits for more/less categories of colors.
 If namesFrom given, add names to colors; otherwise, add names(x) or x.
 }
-\section{TODO}{
-
-Add parameter invertCols=FALSE to invert colors if TRUE (e.g., Red to Orange)
-}
-
 \examples{
 brewPalCont(10:20)
 brewPalCont(10:20, digits=-1)

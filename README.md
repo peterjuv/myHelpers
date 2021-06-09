@@ -35,10 +35,11 @@ library(myHelpers)
 ## basic example code
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+<!--
+What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
 
-``` r
+
+```r
 summary(cars)
 #>      speed           dist       
 #>  Min.   : 4.0   Min.   :  2.00  
@@ -49,12 +50,11 @@ summary(cars)
 #>  Max.   :25.0   Max.   :120.00
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date.
+You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
 
 You can also embed plots, for example:
 
 <img src="man/figures/README-pressure-1.png" width="100%" />
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub\!
+In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+-->

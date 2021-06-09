@@ -4,13 +4,34 @@
 #' 
 #' @author Peter Juvan, \email{peter.juvan@gmail.com}
 #' @docType package
-#' @section Base
+#' 
+#' @section Base:
+#' setRowNames
 #' @section STAT + PLOTS:
+#' boxJitterPlot_std
+#' write_boxplot_descStat
+#' plot_corr
 #' @section Write:
+#' write.table.rowNames
 #' @section Colors:
+#' brewPalFac
+#' brewPalCont
 #' @section Conversions:
+#' defactorChr
+#' defactor
+#' discretize_namedIntervals
+#' discretizeTime_equalInterval
+#' capwords
 #' @section Plots:
+#' MDScols
+#' MASS_MDScols (DEPRICATED)
+#' plotIsoMDS
+#' multiEffectPlot
+#' ggBinary
 #' @section Calculations:
+#' corDist
+#' scaleRobust
+#' 
 #' @name myHelpers
 NULL
 
@@ -45,6 +66,37 @@ setRowNames <- function(x, rowNames) {
 #### STAT + PLOTS ####
 ######################
 
+#' Boxplot & jitter standardized values of continuous variables
+#' 
+#' Plot boxplots and jitters of values of continuous variables which are standardized using median/mad. Ignoring dates.
+#' Jitter uses a discrete variable that is passed through .colors.
+#' Optional transformation for Y-asis may be used. 
+#' Implemented for plotting data from targets with many parameters; thus it ignores all \code{"color_"} variables.
+#' Implemented for 2020-08_EKocar_fibIT.
+#' @param data Tibble
+#' @param color Variable passed to \code{geom_jitter()}
+#' @param trans Character passed to \code{scale_y_continuous()}, default "identity"; "log2" suggested for outliers
+#' @return ggplot2 object
+#' @importFrom rlang enquo !!
+#' @importFrom dplyr select mutate across
+#' @importFrom tidyselect starts_with
+#' @importFrom tidyr pivot_longer
+#' @importFrom ggplot2 ggplot aes geom_boxplot geom_jitter theme element_text scale_y_continuous
+boxJitterPlot_std <- function(data, color, trans="identity") {
+    color <- rlang::enquo(color)
+    p <- data %>% 
+        dplyr::select(-tidyselect::starts_with("color_")) %>% 
+        dplyr::select(!!color, tidyselect:::where(~is.double(.x) & !inherits(.x, "Date"))) %>% 
+        dplyr::mutate(dplyr::across(tidyselect:::where(is.double), ~((.x-median(.x, na.rm=TRUE))/mad(.x, na.rm=TRUE)))) %>% 
+        tidyr::pivot_longer(cols=where(is.double), names_to="Variable", values_to="Std_robust_value") %>% 
+        ggplot2::ggplot(ggplot2::aes(Variable, Std_robust_value)) + 
+        ggplot2::geom_boxplot(na.rm=TRUE, outlier.shape=NA) +
+        ggplot2::geom_jitter(ggplot2::aes(color=!!color)) +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1)) +
+        ggplot2::scale_y_continuous(name=paste("Standardized (med/mad) values on", trans, "scale"), trans=trans)
+    return(p)
+}
+
 #' Descriptive statistics tables, boxplots
 #' 
 #' 2019-10-13 for OBV
@@ -52,6 +104,7 @@ setRowNames <- function(x, rowNames) {
 #' @import dplyr
 #' @importFrom ggplot2 ggplot aes_string geom_boxplot geom_jitter
 #' @importFrom ggpubr theme_pubr stat_compare_means
+#' @importFrom grDevices pdf dev.off
 #' @export
 write_boxplot_descStat <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=NULL, varColor=NA, statMethod=NULL) {
   # require(dplyr)
@@ -76,7 +129,7 @@ write_boxplot_descStat <- function(data, fNameMid, folder=".", varsExclude=c(), 
 #    write.table(dataSum, file.path(folder,paste0("descStat_",fNameMid,"_",deparse(substitute(data)),"_",dVar,"_",varColorUse,".tab")), sep="\t",row.names=FALSE)
     # boxplot
     varColorPlot <- if (is.na(varColorUse)) NULL else varColorUse
-    pdf(file.path(folder,paste0("boxplot_",fNameMid,"_",deparse(substitute(data)),"_",dVar,"_",varColorUse,".pdf")),6,6)
+    grDevices::pdf(file.path(folder,paste0("boxplot_",fNameMid,"_",deparse(substitute(data)),"_",dVar,"_",varColorUse,".pdf")),6,6)
     for (nVar in numNames) {
       gg<-ggplot(data, aes_string(dVar, nVar, color=varColorPlot)) +
         geom_boxplot(outlier.shape=NA, width=0.35) + 
@@ -85,7 +138,7 @@ write_boxplot_descStat <- function(data, fNameMid, folder=".", varsExclude=c(), 
         stat_compare_means(method=statMethod, na.rm=TRUE, show.legend=FALSE)
       print(gg)
     }
-    dev.off()
+    grDevices::dev.off()
   }
 }
 
@@ -111,6 +164,7 @@ write_boxplot_descStat <- function(data, fNameMid, folder=".", varsExclude=c(), 
 #'   dev.off()
 #' }
 #' }
+#' @importFrom grDevices pdf dev.off
 #' @export
 plot_corr <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=NULL, orders=c("AOE", "original"), wh=12, ...) {
   require(corrplot)
@@ -121,9 +175,9 @@ plot_corr <- function(data, fNameMid, folder=".", varsExclude=c(), varsInclude=N
   if (!is.null(varsInclude)) data <- data %>% select_at(vars(all_of(varsInclude)))
   cors <- cor(data, use="na.or.complete")
   colnames(cors) <- rownames(cors) <- colnames(data)
-  pdf(file.path(folder,paste0("corrplot_",fNameMid,"_",dataName,".pdf")),width=wh,height=wh)
+  grDevices::pdf(file.path(folder,paste0("corrplot_",fNameMid,"_",dataName,".pdf")),width=wh,height=wh)
   for (order in orders) corrplot.mixed(cors, order=order, ...)
-  dev.off()
+  grDevices::dev.off()
 }  
 
 ###############
@@ -161,13 +215,14 @@ write.table.rowNames <- function(x, col1name="rowNames", quote=F, sep="\t", row.
 #' In the 2nd to the last line, we create a factor from colsn with levels ordered as they appear;
 #' In the last line, we reorder the levels of that factor according to the order of levels in x;
 #' xtfrm(unique(x)) reports indices of (unique) values in levels.
+#' @importFrom grDevices colorRampPalette
 #' @export
 brewPalFac <- function(x, n=9, name="OrRd", pull=NULL, namesFrom=NULL) {
     if (!is.null(namesFrom)) x <- setNames(x, namesFrom)
     if (!is.factor(x)) x <- factor(x, levels=unique(x))
     if (is.null(pull)) pull <- 1:n
     assertthat::assert_that(all(pull > 0) & all(pull <= n) & all(pull == round(pull)))
-    cols <- colorRampPalette(rev(RColorBrewer::brewer.pal(n, name)[pull]))(length(levels(x)))[x]
+    cols <- grDevices::colorRampPalette(rev(RColorBrewer::brewer.pal(n, name)[pull]))(length(levels(x)))[x]
     if (!is.null(names(x))) colsn <- setNames(cols,names(x)) else colsn <- setNames(cols,x)
     colsf <- factor(colsn, levels = unique(colsn))
     factor(colsf, levels = levels(colsf)[xtfrm(unique(x))])
@@ -196,12 +251,13 @@ brewPalFac <- function(x, n=9, name="OrRd", pull=NULL, namesFrom=NULL) {
 #' brewPalCont(c(10:14, 0,  16:20), n=3, digits=-1)
 #' brewPalCont(c(10:14, NA, 16:20), n=3, digits=-1)
 #' brewPalCont(c(10:14, NA, 16:20), n=3, digits=-1, rev=FALSE)
+#' @importFrom grDevices colorRampPalette
 #' @export
 brewPalCont <- function(x, n=5, name="YlGn", digits=2, namesFrom=NULL, NAcolor="#000000", rev=TRUE) {
     if (!is.null(namesFrom)) x <- setNames(x, namesFrom)
     myBrew <- RColorBrewer::brewer.pal(n, name)
     if (rev) myBrew <- rev(myBrew)
-    myPalette <- colorRampPalette(myBrew)
+    myPalette <- grDevices::colorRampPalette(myBrew)
     xInd <- round(x*10**digits)
     cols <- myPalette(max(xInd,na.rm=TRUE)-min(xInd,na.rm=TRUE)+1)[xInd-min(xInd,na.rm=TRUE)+1]
     cols[is.na(cols)] <- NAcolor
@@ -366,6 +422,7 @@ capwords <- function(s, strict = FALSE) {
 #' @inheritParams graphics::plot
 #' @return A k-column vector of the fitted configuration from \code{FUN()}
 #' @section TODO: add parameter dim.plot
+#' @importFrom graphics plot text title
 #' @export
 MDScols <- function(data, scale=FALSE, center=FALSE, FUN = "isoMDS", p = 2, selection = "pairwise", top = 500,
   k = 2, maxit = 50, trace = TRUE, tol = 1e-4, plot = FALSE, labels = names(data), 
@@ -427,9 +484,9 @@ MDScols <- function(data, scale=FALSE, center=FALSE, FUN = "isoMDS", p = 2, sele
       else
         main <- paste(FUN, mainStdUsed, Minkowski, p, ",", dim(data)[[2]], "objects, top", top, selection, "parameters")
     }
-    plot(fitMDS[,1], fitMDS[,2], type="n", xlab=xlab, ylab=ylab, ...)
-    text(fitMDS[,1], fitMDS[,2], labels=labels, cex=cex, col=col)
-    title(main=main, cex.main=cex.main)
+    graphics::plot(fitMDS[,1], fitMDS[,2], type="n", xlab=xlab, ylab=ylab, ...)
+    graphics::text(fitMDS[,1], fitMDS[,2], labels=labels, cex=cex, col=col)
+    graphics::title(main=main, cex.main=cex.main)
   }
   return(fitMDS)
 }
@@ -459,6 +516,7 @@ MDScols <- function(data, scale=FALSE, center=FALSE, FUN = "isoMDS", p = 2, sele
 #' @param cex.main Size of title 
 #' @inheritParams graphics::plot
 #' @return A k-column vector of the fitted configuration from \code{FUN()}
+#' @importFrom graphics plot text title
 #' @export
 MASS_MDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", FUN = "isoMDS", p = 2, 
   k = 2, maxit = 50, trace = TRUE, tol = 1e-3, plot = FALSE, labels = names(data), 
@@ -483,9 +541,9 @@ MASS_MDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", 
   if (plot) {
     if (!is.null(main) & main==TRUE)
         main <- paste(FUN, mainStdUsed, method, dim(data)[[2]], "objects,", dim(data)[[1]], "parameters")
-    plot(fit9$points[,1], fit9$points[,2], type="n", xlab=xlab, ylab=ylab, ...)
-    text(fit9$points[,1], fit9$points[,2], labels=labels, cex=cex, col=col)
-    title(main=main, cex.main=cex.main)
+    graphics::plot(fit9$points[,1], fit9$points[,2], type="n", xlab=xlab, ylab=ylab, ...)
+    graphics::text(fit9$points[,1], fit9$points[,2], labels=labels, cex=cex, col=col)
+    graphics::title(main=main, cex.main=cex.main)
   }
   return(fit9$points)
 }
@@ -496,7 +554,7 @@ MASS_MDScols <- function(data, scale=FALSE, center=FALSE, method = "euclidean", 
 #' @inheritParams MDScols
 #' @export
 plotIsoMDS <- function(FUN = "isoMDS", plot = TRUE, selection = NULL, ...) {
-  invisible(MDScols(FUN=FUN, plot=plot, selectiuon=selection...))
+  invisible(MDScols(FUN=FUN, plot=plot, selection=selection, ...))
 } 
 
 

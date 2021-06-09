@@ -8,31 +8,50 @@
 Misc helper functions for R
 }
 \section{Base}{
-NA
+
+setRowNames
 }
 
 \section{STAT + PLOTS}{
 
+boxJitterPlot_std
+write_boxplot_descStat
+plot_corr
 }
 
 \section{Write}{
 
+write.table.rowNames
 }
 
 \section{Colors}{
 
+brewPalFac
+brewPalCont
 }
 
 \section{Conversions}{
 
+defactorChr
+defactor
+discretize_namedIntervals
+discretizeTime_equalInterval
+capwords
 }
 
 \section{Plots}{
 
+MDScols
+MASS_MDScols (DEPRICATED)
+plotIsoMDS
+multiEffectPlot
+ggBinary
 }
 
 \section{Calculations}{
 
+corDist
+scaleRobust
 }
 
 \author{

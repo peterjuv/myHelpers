@@ -2,6 +2,7 @@
 
 export(MASS_MDScols)
 export(MDScols)
+export(boxJitterPlot_std)
 export(brewPalCont)
 export(brewPalFac)
 export(capwords)

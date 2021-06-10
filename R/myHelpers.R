@@ -82,6 +82,7 @@ setRowNames <- function(x, rowNames) {
 #' @importFrom tidyselect starts_with
 #' @importFrom tidyr pivot_longer
 #' @importFrom ggplot2 ggplot aes geom_boxplot geom_jitter theme element_text scale_y_continuous
+#' @export
 boxJitterPlot_std <- function(data, color, trans="identity") {
     color <- rlang::enquo(color)
     p <- data %>% 
